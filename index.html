@@ -22,7 +22,7 @@
 
         body {
             font-family: 'Segoe UI', sans-serif;
-            background-color: var(--molloy-maroon); /* Default background */
+            background-color: var(--molloy-maroon);
             margin: 0; padding: 0;
             height: 100vh; overflow: hidden;
             user-select: none;
@@ -99,13 +99,21 @@
         }
         .option-btn:active { transform: scale(0.98); }
         
-        .lifelines { display: flex; justify-content: center; gap: 15px; margin-top: 20px; }
+        /* The class used to hide wrong answers */
+        .hidden-opt { visibility: hidden; pointer-events: none; }
+
+        .lifelines { display: flex; justify-content: center; gap: 20px; margin-top: 20px; }
+        .lifeline-wrapper { text-align: center; }
         .lifeline-icon {
             width: 50px; height: 50px; border-radius: 50%;
             background: var(--molloy-maroon); color: white;
             display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+            box-shadow: 0 3px 6px rgba(0,0,0,0.2); cursor: pointer;
+            margin: 0 auto;
         }
+        /* Disabled state for lifeline */
+        .lifeline-icon.used { background: #ccc; cursor: not-allowed; box-shadow: none; }
+        .lifeline-label { font-size: 10px; color: #888; margin-top: 5px; }
 
         /* --- PROFILE STYLES --- */
         .profile-header-bg {
@@ -177,8 +185,18 @@
                     <div id="options-area"></div>
                     
                     <div class="lifelines">
-                        <div class="lifeline-icon" onclick="alert('50:50 Used!')"><i class="fas fa-adjust"></i></div>
-                        <div class="lifeline-icon" onclick="alert('Professor Hint: Focus on Value!')"><i class="fas fa-user-graduate"></i></div>
+                        <div class="lifeline-wrapper">
+                            <div id="btn-5050" class="lifeline-icon" onclick="use5050()">
+                                <i class="fas fa-adjust"></i>
+                            </div>
+                            <div class="lifeline-label">50:50</div>
+                        </div>
+                        <div class="lifeline-wrapper">
+                            <div id="btn-ask" class="lifeline-icon" onclick="useAskProf()">
+                                <i class="fas fa-user-graduate"></i>
+                            </div>
+                            <div class="lifeline-label">Ask Prof</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -237,9 +255,24 @@
     <script>
         // --- DATA ---
         const questions = [
-            { q: "According to 'The Personal MBA', every successful business creates something of...?", options: ["Value", "Cost", "Complexity"], correct: 0 },
-            { q: "Which is NOT one of the 5 parts of every business?", options: ["Marketing", "Sales", "Office Politics"], correct: 2 },
-            { q: "What is the term for 'making people want what you have'?", options: ["Accounting", "Marketing", "HR"], correct: 1 }
+            { 
+                q: "According to 'The Personal MBA', every successful business creates something of...?", 
+                options: ["Value", "Cost", "Complexity", "Bureaucracy"], 
+                correct: 0,
+                hint: "It starts with V. Without this, no one pays you."
+            },
+            { 
+                q: "Which is NOT one of the 5 parts of every business?", 
+                options: ["Marketing", "Sales", "Office Politics", "Value Delivery"], 
+                correct: 2,
+                hint: "Think about what brings money in versus what wastes time."
+            },
+            { 
+                q: "What is the term for 'making people want what you have'?", 
+                options: ["Accounting", "Marketing", "HR", "Operations"], 
+                correct: 1,
+                hint: "It is about getting attention and building interest."
+            }
         ];
 
         let state = {
@@ -247,7 +280,8 @@
             email: "student@molloy.edu",
             balance: 0,
             qIndex: 0,
-            txns: []
+            txns: [],
+            locked: false // prevents double clicking
         };
 
         // --- LOGIN LOGIC ---
@@ -272,17 +306,12 @@
 
         // --- TAB SWITCHING ---
         function switchTab(tabName, el) {
-            // Update Active Nav
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
             el.classList.add('active');
 
-            // Hide all views
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            
-            // Show selected view
             document.getElementById('view-' + tabName).classList.add('active');
 
-            // Refresh Data if needed
             if(tabName === 'profile') updateProfileUI();
             if(tabName === 'wallet') renderWallet();
         }
@@ -311,6 +340,8 @@
             if(state.qIndex >= questions.length) {
                 document.getElementById('q-text').innerText = "Level 1 Complete!";
                 document.getElementById('options-area').innerHTML = "<div style='color:#888;'>You are a Molloy Star!</div>";
+                // Hide lifelines when game over
+                document.querySelector('.lifelines').style.display = 'none';
                 return;
             }
             
@@ -319,10 +350,16 @@
             
             const area = document.getElementById('options-area');
             area.innerHTML = "";
+            state.locked = false; // unlock for new question
+
+            // Reset Lifeline Buttons Visuals
+            document.getElementById('btn-5050').classList.remove('used');
+            document.getElementById('btn-ask').classList.remove('used');
             
             q.options.forEach((opt, idx) => {
                 const btn = document.createElement('div');
                 btn.className = 'option-btn';
+                btn.id = 'opt-' + idx; // ID needed for 50:50 logic
                 btn.innerText = opt;
                 btn.onclick = () => handleAnswer(idx, btn);
                 area.appendChild(btn);
@@ -330,7 +367,11 @@
         }
 
         function handleAnswer(idx, btn) {
+            if(state.locked) return;
+            state.locked = true; // lock input
+
             const correct = questions[state.qIndex].correct;
+            
             if(idx === correct) {
                 btn.style.background = "#d4edda";
                 btn.style.borderColor = "#28a745";
@@ -350,9 +391,51 @@
             } else {
                 btn.style.background = "#f8d7da";
                 btn.style.borderColor = "#dc3545";
-                alert("Incorrect! Try again.");
+                alert("Incorrect! Moving to next question...");
+                setTimeout(() => {
+                    state.qIndex++;
+                    renderQuestion();
+                }, 1000);
             }
         }
+
+        /* --- LIFELINES LOGIC (REAL) --- */
+        function use5050() {
+            // Check if already used or locked
+            const btn = document.getElementById('btn-5050');
+            if(btn.classList.contains('used') || state.locked) return;
+
+            const correctIndex = questions[state.qIndex].correct;
+            let removedCount = 0;
+
+            // Loop through options 0 to 3
+            for(let i=0; i<4; i++) {
+                // If it is NOT the correct answer, hide it
+                if(i !== correctIndex && removedCount < 2) {
+                    const optBtn = document.getElementById('opt-' + i);
+                    if(optBtn) {
+                        optBtn.classList.add('hidden-opt');
+                        removedCount++;
+                    }
+                }
+            }
+            
+            // Mark button as used
+            btn.classList.add('used');
+        }
+
+        function useAskProf() {
+            const btn = document.getElementById('btn-ask');
+            if(btn.classList.contains('used') || state.locked) return;
+
+            // Get hint from data
+            const hint = questions[state.qIndex].hint;
+            alert("👨‍🏫 Prof. O'Keefe says:\n\n" + hint);
+
+            // Mark button as used
+            btn.classList.add('used');
+        }
+
     </script>
 </body>
 </html>
