@@ -1,77 +1,39 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#950423"> <title>Molloy Business Challenge</title>
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Molloy App</title>
     <style>
-        /* --- MOLLOY THEME VARIABLES --- */
-        :root {
-            --molloy-maroon: #950423;
-            --molloy-gold: #D6C172;
-            --bg-color: #f4f4f9;
-            --text-dark: #333;
-            --white: #ffffff;
-        }
+        body { font-family: sans-serif; background-color: #950423; color: white; text-align: center; padding: 50px 20px; }
+        button { padding: 15px 30px; font-size: 18px; color: #950423; background: #D6C172; border: none; border-radius: 8px; cursor: pointer; margin-top: 20px; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            overflow: hidden; /* Prevents scroll bounce */
-            user-select: none; /* Feels more like an app */
-        }
+    <div id="login-view">
+        <h1>Molloy Business<br>Challenge</h1>
+        <p>Login to start</p>
+        <button onclick="startApp()">Login with Google</button>
+    </div>
 
-        /* --- SCREEN MANAGEMENT (Switching between Login & Game) --- */
-        .screen {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            display: none; /* Hidden by default */
-            flex-direction: column;
-            background-color: var(--bg-color);
-        }
+    <div id="app-view" class="hidden">
+        <h1>Welcome, Student!</h1>
+        <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px; margin: 20px 0;">
+            Wallet Balance: <br>
+            <strong style="font-size: 40px; color: #D6C172;">$0 MD</strong>
+        </div>
+        <p>Level 1: Value Creation</p>
+        <button onclick="alert('Correct! +10 Molloy Dollars')">Start Quiz</button>
+    </div>
 
-        .screen.active {
-            display: flex; /* Only the active screen is shown */
+    <script>
+        function startApp() {
+            document.getElementById('login-view').classList.add('hidden');
+            document.getElementById('app-view').classList.remove('hidden');
         }
+    </script>
 
-        /* --- LOGIN SCREEN STYLES --- */
-        #login-screen {
-            background: var(--molloy-maroon);
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            color: white;
-            padding: 40px;
-            box-sizing: border-box;
-            z-index: 100;
-        }
-
-        .login-logo {
-            font-size: 80px;
-            color: var(--molloy-gold);
-            margin-bottom: 20px;
-        }
-
-        .login-title {
-            font-size: 28px;
-            font-weight: bold;
-            margin-bottom: 40px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            line-height: 1.2;
-        }
-
-        .input-group {
-            width:
+</body>
+</html>
