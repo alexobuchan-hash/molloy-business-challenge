@@ -3,37 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Molloy App</title>
+    <title>Molloy Test</title>
     <style>
-        body { font-family: sans-serif; background-color: #950423; color: white; text-align: center; padding: 50px 20px; }
-        button { padding: 15px 30px; font-size: 18px; color: #950423; background: #D6C172; border: none; border-radius: 8px; cursor: pointer; margin-top: 20px; }
-        .hidden { display: none; }
+        /* This forces the background to be RED immediately */
+        body {
+            background-color: #950423; /* Molloy Maroon */
+            color: white;
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .card {
+            background: white;
+            color: black;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
 
-    <div id="login-view">
-        <h1>Molloy Business<br>Challenge</h1>
-        <p>Login to start</p>
-        <button onclick="startApp()">Login with Google</button>
+    <div class="card">
+        <h1>It Works!</h1>
+        <p>If you can see this, the code is live.</p>
+        <button onclick="alert('Hello Dean!')" style="padding:10px 20px; font-size:16px; background:#D6C172; border:none; border-radius:5px;">
+            Click Me
+        </button>
     </div>
-
-    <div id="app-view" class="hidden">
-        <h1>Welcome, Student!</h1>
-        <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px; margin: 20px 0;">
-            Wallet Balance: <br>
-            <strong style="font-size: 40px; color: #D6C172;">$0 MD</strong>
-        </div>
-        <p>Level 1: Value Creation</p>
-        <button onclick="alert('Correct! +10 Molloy Dollars')">Start Quiz</button>
-    </div>
-
-    <script>
-        function startApp() {
-            document.getElementById('login-view').classList.add('hidden');
-            document.getElementById('app-view').classList.remove('hidden');
-        }
-    </script>
 
 </body>
 </html>
