@@ -1,40 +1,103 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Molloy Test</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#950423"> <title>Molloy Business Challenge</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
-        /* This forces the background to be RED immediately */
+        /* --- MOLLOY THEME --- */
+        :root {
+            --molloy-maroon: #950423;
+            --molloy-gold: #D6C172;
+            --bg-color: #f4f4f9;
+            --text-dark: #333;
+            --white: #ffffff;
+        }
+
         body {
-            background-color: #950423; /* Molloy Maroon */
-            color: white;
-            font-family: sans-serif;
-            display: flex;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        /* --- SCREEN MANAGEMENT --- */
+        .screen {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            display: none; /* Hidden by default */
             flex-direction: column;
+            background-color: var(--bg-color);
+        }
+
+        .screen.active {
+            display: flex; /* Only active screen shows */
+        }
+
+        /* --- LOGIN SCREEN --- */
+        #login-screen {
+            background: var(--molloy-maroon);
             align-items: center;
             justify-content: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .card {
-            background: white;
-            color: black;
-            padding: 20px;
-            border-radius: 10px;
             text-align: center;
+            color: white;
+            padding: 40px;
+            box-sizing: border-box;
+            z-index: 100;
         }
-    </style>
-</head>
-<body>
 
-    <div class="card">
-        <h1>It Works!</h1>
-        <p>If you can see this, the code is live.</p>
-        <button onclick="alert('Hello Dean!')" style="padding:10px 20px; font-size:16px; background:#D6C172; border:none; border-radius:5px;">
-            Click Me
-        </button>
-    </div>
+        .login-logo {
+            font-size: 80px;
+            color: var(--molloy-gold);
+            margin-bottom: 20px;
+        }
 
-</body>
-</html>
+        .login-title {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            line-height: 1.2;
+        }
+
+        .input-group {
+            width: 100%;
+            max-width: 300px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 12px;
+            margin-bottom: 5px;
+            color: rgba(255,255,255,0.7);
+            font-weight: 600;
+        }
+
+        .login-input {
+            width: 100%;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.1);
+            color: white;
+            font-size: 16px;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        .login-input
